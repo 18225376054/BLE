@@ -164,7 +164,7 @@ public class OthersFragment extends Fragment {
                                 graphic = new Graphic(point, pictureMarkerSymbol);
                                 graphicsOverlay.getGraphics().add(graphic);
 
-                                //当定位进入到目标点或者被再次点击导航关闭时的判断操作
+                                //当定位进入到目标点或者被再次点击导航关闭时的判断操作  test
                                 if ((UdpReceiverThread.xValue.contains("106.55311") & UdpReceiverThread.yValue.contains("29.74239")) | nav_or_cancel) {
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override

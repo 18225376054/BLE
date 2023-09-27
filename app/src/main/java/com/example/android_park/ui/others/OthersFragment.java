@@ -109,8 +109,8 @@ public class OthersFragment extends Fragment {
         outdoor_button = view.findViewById(R.id.outdoor);
 
         //arcgis路径规划初始化
-//        mRouteTask = new RouteTask(Objects.requireNonNull(getActivity()).getApplicationContext(), "http://113.250.60.62:6080/arcgis/rest/services/one_floor_show/NAServer/%E8%B7%AF%E5%BE%84");
-//        listenableFuture = mRouteTask.createDefaultParametersAsync();
+        mRouteTask = new RouteTask(Objects.requireNonNull(getActivity()).getApplicationContext(), "http://113.250.60.62:6080/arcgis/rest/services/one_floor_show/NAServer/%E8%B7%AF%E5%BE%84");
+        listenableFuture = mRouteTask.createDefaultParametersAsync();
 
         //获取drawable中的定位图形
         drawable = getResources().getDrawable(R.drawable.location);
@@ -119,14 +119,14 @@ public class OthersFragment extends Fragment {
 
         //初始化arcgis地图
         mArcgisView = view.findViewById(R.id.mArcgisView);
-//        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer(application.mapServer_url);
-//        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("http://113.250.60.62:6080/arcgis/rest/services//one_feature/MapServer");//实验室一楼http:
-        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("http://113.250.60.62:6080/arcgis/services/carport/MapServer");//地下停车场
+
+//        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("http://113.250.60.62:6080/arcgis/rest/services//one_feature/MapServer");//实验室一楼
+        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("http://113.250.60.62:6080/arcgis/rest/services/carport1/MapServer");//地下停车场
         mArcgisView.setVisibility(View.VISIBLE);
-        map = new ArcGISMap(Basemap.Type.STREETS_VECTOR, application.show_Latitude_GPS, application.show_Longitude_GPS, 12);//中心点坐标和缩放级别
+        map = new ArcGISMap(Basemap.Type.STREETS_VECTOR, application.show_Latitude_GPS, application.show_Longitude_GPS, 12);//arcgis地图初始中心点坐标和缩放级别
         map.getOperationalLayers().add(mapImageLayer);
         mArcgisView.setMap(map);
-        map.setInitialViewpoint(new Viewpoint(application.show_Latitude_GPS, application.show_Longitude_GPS,300));
+        map.setInitialViewpoint(new Viewpoint(application.show_Latitude_GPS,  application.show_Longitude_GPS,300));//停车场原点
 
         //初始化门口坐标点
         GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
@@ -209,6 +209,7 @@ public class OthersFragment extends Fragment {
                             graphicsOverlay.getGraphics().clear();
                         }
                         point = new Point(Double.parseDouble(UdpReceiverThread.xValue), Double.parseDouble(UdpReceiverThread.yValue), SpatialReferences.getWgs84());
+//                        point = new Point(application.test[0], application.test[1], SpatialReferences.getWgs84());//点测试
                         graphic = new Graphic(point, pictureMarkerSymbol);
                         graphicsOverlay.getGraphics().add(graphic);
                         IsNotFirst = true;
@@ -239,9 +240,9 @@ public class OthersFragment extends Fragment {
             @Override
             public void run() {
                 while (true){
-                    Viewpoint newViewpoint = new Viewpoint(application.show_Latitude_GPS, application.show_Longitude_GPS,300);
+//                    Viewpoint newViewpoint = new Viewpoint(application.show_Latitude_GPS, application.show_Longitude_GPS,300);
                     // 应用新的视角 默认刷新视角
-                    mArcgisView.setViewpointAsync(newViewpoint);
+//                    mArcgisView.setViewpointAsync(newViewpoint);
                     if(isfirst & degreeZ != 0){
                         reference = degreeZ;
                         isfirst = false;
@@ -281,9 +282,9 @@ public class OthersFragment extends Fragment {
                     } catch (InterruptedException | ExecutionException e ) {
                         Log.e("wcw", "Error listenableFuture.get() " + e.getMessage());
                     }
-                    //创建点
+                    //创建停靠点
 
-                    Stop stop0 = new Stop(new Point(106.553118, 29.742394, SpatialReferences.getWgs84()));//展台
+                    Stop stop0 = new Stop(new Point(106.552512, 29.742040, SpatialReferences.getWgs84()));//车位3
                     Point point_my = new Point(lon, lat, SpatialReferences.getWgs84());
                     Stop stop2 = new Stop(point_my);
 

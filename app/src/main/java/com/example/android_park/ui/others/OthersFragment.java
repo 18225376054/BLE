@@ -109,7 +109,7 @@ public class OthersFragment extends Fragment {
         outdoor_button = view.findViewById(R.id.outdoor);
 
         //arcgis路径规划初始化
-        mRouteTask = new RouteTask(Objects.requireNonNull(getActivity()).getApplicationContext(), "http://113.250.60.62:6080/arcgis/rest/services/one_floor_show/NAServer/%E8%B7%AF%E5%BE%84");
+        mRouteTask = new RouteTask(Objects.requireNonNull(getActivity()).getApplicationContext(), "http://113.250.60.62:6080/arcgis/rest/services/carport4/NAServer/%E8%B7%AF%E5%BE%84");//到达车位一路径
         listenableFuture = mRouteTask.createDefaultParametersAsync();
 
         //获取drawable中的定位图形
@@ -121,17 +121,17 @@ public class OthersFragment extends Fragment {
         mArcgisView = view.findViewById(R.id.mArcgisView);
 
 //        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("http://113.250.60.62:6080/arcgis/rest/services//one_feature/MapServer");//实验室一楼
-        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("http://113.250.60.62:6080/arcgis/rest/services/carport1/MapServer");//地下停车场
+        ArcGISMapImageLayer mapImageLayer = new ArcGISMapImageLayer("http://113.250.60.62:6080/arcgis/rest/services/carport4/MapServer");//地下停车场
         mArcgisView.setVisibility(View.VISIBLE);
         map = new ArcGISMap(Basemap.Type.STREETS_VECTOR, application.show_Latitude_GPS, application.show_Longitude_GPS, 12);//arcgis地图初始中心点坐标和缩放级别
         map.getOperationalLayers().add(mapImageLayer);
         mArcgisView.setMap(map);
         map.setInitialViewpoint(new Viewpoint(application.show_Latitude_GPS,  application.show_Longitude_GPS,300));//停车场原点
 
-        //初始化门口坐标点
+        //初始化门口坐标点 起始坐标点？
         GraphicsOverlay graphicsOverlay = new GraphicsOverlay();
         mArcgisView.getGraphicsOverlays().add(graphicsOverlay);
-        point = new Point(application.test[0], application.test[1], SpatialReferences.getWgs84());
+        point = new Point(application.test[2], application.test[3], SpatialReferences.getWgs84());
         graphic = new Graphic(point, pictureMarkerSymbol);
         graphicsOverlay.getGraphics().add(graphic);
 
@@ -158,14 +158,24 @@ public class OthersFragment extends Fragment {
                     public void run() {
                         synchronized (object) {
                             while (continue_or_not) {
-                                revise = nav(Double.parseDouble(UdpReceiverThread.xValue), Double.parseDouble(UdpReceiverThread.yValue));
+                                revise = nav(Double.parseDouble(UdpReceiverThread.xValue), Double.parseDouble(UdpReceiverThread.yValue));//离路径最近的XY
                                 graphicsOverlay.getGraphics().clear();
                                 point = new Point((Double.parseDouble(UdpReceiverThread.xValue) + revise[0]) / 2, (Double.parseDouble(UdpReceiverThread.yValue) + revise[1]) / 2, SpatialReferences.getWgs84());
                                 graphic = new Graphic(point, pictureMarkerSymbol);
                                 graphicsOverlay.getGraphics().add(graphic);
 
+//路径测试
+//                                double routeX1 = application.testroute[0];
+//                                double routeY1 = application.testroute[1];
+//                                revise=nav(routeX1,routeY1);
+//                                graphicsOverlay.getGraphics().clear();
+//                                graphic = new Graphic(point, pictureMarkerSymbol);
+//                                graphicsOverlay.getGraphics().add(graphic);
+
+
+
                                 //当定位进入到目标点或者被再次点击导航关闭时的判断操作  test
-                                if ((UdpReceiverThread.xValue.contains("106.55311") & UdpReceiverThread.yValue.contains("29.74239")) | nav_or_cancel) {
+                                if ((UdpReceiverThread.xValue.contains("106.552403") & UdpReceiverThread.yValue.contains("29.742030")) | nav_or_cancel) {//车位一
                                     getActivity().runOnUiThread(new Runnable() {
                                         @Override
                                         public void run() {
@@ -199,7 +209,7 @@ public class OthersFragment extends Fragment {
         });
 
 
-        //基础定位线程
+        //基础定位线程  点显示
         location = new Thread(new Runnable() {
             @Override
             public void run() {
@@ -208,10 +218,25 @@ public class OthersFragment extends Fragment {
                         if (IsNotFirst) {
                             graphicsOverlay.getGraphics().clear();
                         }
-                        point = new Point(Double.parseDouble(UdpReceiverThread.xValue), Double.parseDouble(UdpReceiverThread.yValue), SpatialReferences.getWgs84());
-//                        point = new Point(application.test[0], application.test[1], SpatialReferences.getWgs84());//点测试
+                        point = new Point(Double.parseDouble(UdpReceiverThread.xValue), Double.parseDouble(UdpReceiverThread.yValue), SpatialReferences.getWgs84());//加载XY数据
                         graphic = new Graphic(point, pictureMarkerSymbol);
                         graphicsOverlay.getGraphics().add(graphic);
+//                        for (int i = 0; i < application.test.length; i += 2) {
+//                            double x = application.test[i];
+//                            double y = application.test[i + 1];
+//                            // 创建点并将其添加到 GraphicsOverlay
+//                            Point point = new Point(x, y, SpatialReferences.getWgs84());
+//                            Graphic graphic = new Graphic(point, pictureMarkerSymbol);
+//                            graphicsOverlay.getGraphics().add(graphic);
+//                            try {
+//                                Thread.sleep(500);
+//                            } catch (InterruptedException e) {
+//                                e.printStackTrace();
+//                            }
+//                        }
+
+
+
                         IsNotFirst = true;
 
                         if (!Switch){
@@ -284,7 +309,7 @@ public class OthersFragment extends Fragment {
                     }
                     //创建停靠点
 
-                    Stop stop0 = new Stop(new Point(106.552512, 29.742040, SpatialReferences.getWgs84()));//车位3
+                    Stop stop0 = new Stop(new Point(106.552403, 29.742030, SpatialReferences.getWgs84()));//车位1
                     Point point_my = new Point(lon, lat, SpatialReferences.getWgs84());
                     Stop stop2 = new Stop(point_my);
 
@@ -312,7 +337,7 @@ public class OthersFragment extends Fragment {
                         mRoute = routes.get(0);
 
                         parameters = mRoute.getRouteGeometry();
-                        nearestPoint = GeometryEngine.nearestCoordinate(parameters, point_my).getCoordinate();
+                        nearestPoint = GeometryEngine.nearestCoordinate(parameters, point_my).getCoordinate();//计算参考点point_my在路径上的最近坐标
                         change_point[0] = nearestPoint.getX();
                         change_point[1] = nearestPoint.getY();
 
@@ -382,9 +407,9 @@ public class OthersFragment extends Fragment {
             degreeY=  ((Math.toDegrees(fusedOrientation[2])+360)%360);
             degreeZ=  ((Math.toDegrees(fusedOrientation[0])+360)%360);
 
-        Log.i("degree", "degreeX: "+degreeX);
-        Log.i("degree", "degreeY: "+degreeY);
-        Log.i("degree", "degreeZ: "+degreeZ);
+//        Log.i("degree", "degreeX: "+degreeX);
+//        Log.i("degree", "degreeY: "+degreeY);
+//        Log.i("degree", "degreeZ: "+degreeZ);
 
 
     }

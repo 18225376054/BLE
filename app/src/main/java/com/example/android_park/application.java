@@ -36,7 +36,7 @@ public class application extends Application {
 
 //    public static double show_Longitude_GPS = 106.552941;//展厅中心位置GPS坐标
 //    public static double show_Latitude_GPS = 29.742340;
-    public static double show_Longitude_GPS = 106.552459;//停车场GPS坐标
+    public static double show_Longitude_GPS = 106.552429;//停车场GPS坐标
     public static double show_Latitude_GPS = 29.742127;
 
 
@@ -60,7 +60,8 @@ public class application extends Application {
 //            106.553022,29.742337,106.553030,29.742341,106.553035,29.742347,106.553043,29.742352,106.553049,29.742361,106.553059,29.742362,106.553067,29.742370,
 //            106.553076,29.742371,106.553088,29.742373,106.553093,29.742380,106.553102,29.742384,106.553113,29.742385,106.553118,29.742394,};
 
-    public static double[] test = {106.552459,29.742127,106.552457,29.742125};//0/1原点
+    public static double[] test = {106.552459,29.742127,106.552459,29.742125,106.552466,29.742012,106.552391,29.742013,106.552391,29.742125};//原点 F1 FC C0 01
+    public static double[] testroute ={106.552459,29.742125,106.552457,29.742015,106.552465,29.742092,106.552403,29.742069,106.552404,29.742045};//原点106.552457  29.742105
     @Override
     public void onCreate() {
         super.onCreate();
